@@ -18,6 +18,14 @@ Make options are:
 
 gemmlowp (https://github.com/google/gemmlowp) has to be installed into the lowp directory, if used.
 
+Or, if you'd like to use CMake, just make a directory and run
+``
+mkdir build
+cmake ../
+make
+
+``
+
 ## Test program
 
     export LD_LIBRARY_PATH=/usr/local/lib:/opt/OpenBLAS/lib (add CUDA and CUDNN lib directories, if using CUDNN)
