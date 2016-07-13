@@ -1,5 +1,0 @@
-/home/nomoko/Downloads/custom_fork_thnets/thnets/build/CMakeFiles/THNets_CPU.dir
-/home/nomoko/Downloads/custom_fork_thnets/thnets/build/CMakeFiles/THNets_CUDA.dir
-/home/nomoko/Downloads/custom_fork_thnets/thnets/build/CMakeFiles/THNets_test.dir
-/home/nomoko/Downloads/custom_fork_thnets/thnets/build/CMakeFiles/THNets_OpenBLAS_BASE.dir
-/home/nomoko/Downloads/custom_fork_thnets/thnets/build/CMakeFiles/THNets_Modules.dir

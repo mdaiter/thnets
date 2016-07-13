@@ -1,5 +1,0 @@
-# Hashes of file build rules.
-0fe338a4b2c68358fa8acceaf9ea6cb4 CMakeFiles/THNets_CUDA.dir/cudnn/THNets_CUDA_generated_cudnn_copy.cu.o
-6791ea8eed7cf7206322e0552a7622f9 CMakeFiles/THNets_CUDA.dir/cudnn/THNets_CUDA_generated_cunn_SpatialFullConvolution.cu.o
-c7e8a49df742906079469a8eca34291b CMakeFiles/THNets_CUDA.dir/cudnn/THNets_CUDA_generated_cunn_SpatialMaxPooling.cu.o
-402afa754c580bd2c705da21c5174311 CMakeFiles/THNets_CUDA.dir/cudnn/THNets_CUDA_generated_cunn_SpatialMaxUnpooling.cu.o
