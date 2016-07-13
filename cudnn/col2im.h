@@ -39,7 +39,7 @@ __global__ void col2im_kernel(const int n, const float* data_col,
 		data_im[index] = val;
 	}
 }
-
+#ifdef HAVEHALF
 __global__ void col2im_kernelH(const int n, const __half *data_col,
 	const int height, const int width, const int channels, const int patch_h, const int patch_w,
 	const int pad_h, const int pad_w, const int stride_h, const int stride_w, const int height_col, const int width_col,
@@ -65,7 +65,7 @@ __global__ void col2im_kernelH(const int n, const __half *data_col,
 		data_im[index] = __float2half(val);
 	}
 }
-
+#endif
 void col2im(const float *data_col, const int channels,
     const int height, const int width, const int patch_h, const int patch_w, const int pad_h,
     const int pad_w, const int stride_h, const int stride_w, float *data_im)
@@ -80,7 +80,7 @@ void col2im(const float *data_col, const int channels,
 		patch_h, patch_w, pad_h, pad_w, stride_h, stride_w,
 		height_col, width_col, data_im);
 }
-
+#ifdef HAVEHALF
 void col2imH(const __half *data_col, const int channels,
     const int height, const int width, const int patch_h, const int patch_w, const int pad_h,
     const int pad_w, const int stride_h, const int stride_w, __half *data_im)
@@ -95,3 +95,4 @@ void col2imH(const __half *data_col, const int channels,
 		patch_h, patch_w, pad_h, pad_w, stride_h, stride_w,
 		height_col, width_col, data_im);
 }
+#endif

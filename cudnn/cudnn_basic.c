@@ -227,7 +227,7 @@ struct network *THcudnn_ToCUDNN(struct network *net)
 			break;
 		case MT_Threshold:
 			if(nn->modules[i].Threshold.threshold || nn->modules[i].Threshold.val)
-				THError("Threshold not supported in CUDNN, only ReLU is supported");
+				THError("Threshold not supported in CUDNN, only Tanh is supported");
 			nn->modules[i].updateOutput = cudnn_Threshold_updateOutput;
 			break;
 		case MT_SoftMax:

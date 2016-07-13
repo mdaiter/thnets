@@ -153,10 +153,12 @@ __global__ void fillwithone(float *dst, int stride)
 	dst[threadIdx.x + blockIdx.x * stride] = 1;
 }
 
+#ifdef HAVEHALF
 __global__ void fillwithoneH(__half *dst, int stride)
 {
 	dst[threadIdx.x + blockIdx.x * stride] = __float2half(1);
 }
+#endif
 
 extern "C" void cuda_fillwithone(int n1, int n2, float *data, int stride);
 extern "C" void cuda_fillwithoneH(int n1, int n2, float *data, int stride);
@@ -166,7 +168,9 @@ void cuda_fillwithone(int n1, int n2, float *data, int stride)
 	fillwithone<<<n1, n2>>>(data, stride);
 }
 
+#ifdef HAVEHALF
 void cuda_fillwithoneH(int n1, int n2, float *data, int stride)
 {
 	fillwithoneH<<<n1, n2>>>((__half *)data, stride);
 }
+#endif

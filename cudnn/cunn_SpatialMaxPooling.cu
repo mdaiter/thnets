@@ -4,7 +4,7 @@ extern "C" {
 
 #include <stdio.h>
 #ifdef HAVEHALF
-#include "cuda_fp16.h"
+#include <cuda_fp16.h>
 #endif
 
 #define CUDA_KERNEL_LOOP(i, n) \

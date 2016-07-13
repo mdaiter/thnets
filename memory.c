@@ -42,9 +42,10 @@ void debug_memorydump(FILE *fp)
 static void debug_print(const char *file, int line, const char *instr, const void *ptr, size_t size, char step)
 {
 	FILE *fp;
-
+#ifdef MEMORYDEBUG
 	if(!detailed)
 		return;
+#endif
 	fp = fopen("memdump.txt", "a+");
 	if(fp)
 	{

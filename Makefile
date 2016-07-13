@@ -3,15 +3,15 @@ MEMORYDEBUG = no
 # Can be 0 or 1
 DEBUG = 0
 # Can be 0 or 1
-CUDNN = 0
+CUDNN = 1
 #Can be 0 or 1
-OPENCL = 0
+OPENCL = 1
 #Can be 0 or 1
 LOWP = 0
 
 CUDAPATH=/usr/local/cuda
-CUDNNPATH=/home/ubuntu/cudnn/cuda
-OPENBLASPATH=/opt/OpenBLAS/lib
+CUDNNPATH=/usr/local/cuda
+OPENBLASPATH=/usr/lib/openblas-base
 
 UNAME_P := $(shell uname -p)
 CFLAGS = -Wall -c -fopenmp -fPIC
@@ -27,12 +27,6 @@ LIBOBJS = thload.o thbasic.o thapi.o SpatialConvolutionMM.o SpatialMaxPooling.o 
 
 ifneq ($(filter arm%,$(UNAME_P)),)
 	CFLAGS += -DARM -D__NEON__ -mcpu=cortex-a9 -mfpu=neon -DHAVEFP16 -mfp16-format=ieee
-	LIBOBJS += axpy_vfp.o sgemm_kernel_4x4_vfpv3.o sgemm_ncopy_4_vfp.o sgemm_tcopy_4_vfp.o
-	VPATH += OpenBLAS-stripped/arm
-endif
-ifneq ($(filter aarc%,$(UNAME_P)),)
-	CFLAGS += -DARM -D__NEON__ -mcpu=cortex-a53 -mfpu=neon-vfpv4 -DHAVEFP16 -mfp16-format=ieee
-	CUFLAGS += -DHAVEHALF --gpu-architecture=compute_53
 	LIBOBJS += axpy_vfp.o sgemm_kernel_4x4_vfpv3.o sgemm_ncopy_4_vfp.o sgemm_tcopy_4_vfp.o
 	VPATH += OpenBLAS-stripped/arm
 endif
@@ -69,7 +63,8 @@ ifeq ($(CUDNN),1)
 		cudnn_SoftMax.o cudnn_copy.o cunn_SpatialMaxUnpooling.o cudnn_SpatialBatchNormalization.o \
 		cunn_SpatialFullConvolution.o
 	CFLAGS += -DCUDNN -I$(CUDAPATH)/include -I$(CUDNNPATH)/include
-	LIBS += -L$(CUDAPATH)/lib -L$(CUDNNPATH)/lib -lcudart -lcudnn -lcublas
+	CUFLAGS += -I$(CUDNNPATH)/include
+	LIBS += -L$(CUDAPATH)/lib64 -L$(CUDNNPATH)/lib64 -lcudart -lcudnn -lcublas
 endif
 
 ifeq ($(OPENCL),1)

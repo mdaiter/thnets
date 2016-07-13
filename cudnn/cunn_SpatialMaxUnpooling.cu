@@ -32,6 +32,7 @@ __global__ void MaxUnpoolForward(const int nthreads, const float *bottom_data, c
 	}
 }
 
+#ifdef HAVEHALF
 __global__ void MaxUnpoolForwardH(const int nthreads, const __half *bottom_data, const float *bottom_mask, 
 	const int num, const int channels, const int iheight, const int iwidth, const int oheight, const int owidth, __half *top_data)
 {
@@ -45,6 +46,7 @@ __global__ void MaxUnpoolForwardH(const int nthreads, const __half *bottom_data,
 		top_data[maxind] = bottom_data[index];
 	}
 }
+#endif
 
 THFloatTensor *cunn_SpatialMaxUnpooling_updateOutput(struct module *module, THFloatTensor *input)
 {
