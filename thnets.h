@@ -344,11 +344,11 @@ typedef struct thnetwork
 	struct network *net;
 	THFloatTensor *out;
 	float mean[3], std[3];
-	bool grayscale;
+	int grayscale;
 } THNETWORK;
 
 void THInit();
-THNETWORK *THLoadNetwork(const char *path, bool grayscale);
+THNETWORK *THLoadNetwork(const char *path, int grayscale);
 void THMakeSpatial(THNETWORK *network);
 int THProcessFloat(THNETWORK *network, float *data, int batchsize, int width, int height, float **result, int *outwidth, int *outheight);
 int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, int width, int height, int stride, float **result, int *outwidth, int *outheight, int bgr);

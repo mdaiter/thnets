@@ -45,10 +45,12 @@ A demo model can be downloaded from [teradeep/demo-apps](https://www.dropbox.com
 
 Initializes the library.
 
-### THNETWORK *THLoadNetwork(const char *path)
+### THNETWORK *THLoadNetwork(const char *path, int grayscale)
 
 Loads the network contained in the path directory and returns a THNETWORK object or 0, if the
-network cannot be loaded. The reason can be obtained with THLastError().
+network cannot be loaded. The reason can be obtained with THLastError(). Pass 1 to grayscale
+to attempt to load a grayscale-oriented mean and std; otherwise, pass 0 for an RGB-oriented
+mean and std.
 
 ### void THMakeSpatial(THNETWORK *network)
 

@@ -187,7 +187,7 @@ THFloatTensor *forward(struct network *net, THFloatTensor *in)
 	return in;
 }
 
-THNETWORK *THLoadNetwork(const char *path, bool grayscale)
+THNETWORK *THLoadNetwork(const char *path, int grayscale)
 {
 	char tmppath[255];
 	int i, longsize = 8;
@@ -233,18 +233,19 @@ THNETWORK *THLoadNetwork(const char *path, bool grayscale)
 			free(net);
 			return 0;
 		}
+		const int stat_length = grayscale ? 1 : 3;
 		for(i = 0; i < net->statobj->table->nelem; i++)
 			if(net->statobj->table->records[i].name.type == TYPE_STRING)
 			{
 				if(!strcmp(net->statobj->table->records[i].name.string.data, "mean"))
-					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, sizeof(net->mean));
+					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, stat_length * sizeof(float));
 				else if(!strcmp(net->statobj->table->records[i].name.string.data, "std"))
-					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, sizeof(net->std));
+					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, stat_length * sizeof(float));
 				/* Saw in some nets that they name it like this. Weird. */
 				else if(!strcmp(net->statobj->table->records[i].name.string.data, "mi"))
-					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, sizeof(float));
+					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, stat_length * sizeof(float));
 				else if(!strcmp(net->statobj->table->records[i].name.string.data, "sigma"))
-					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, sizeof(float));
+					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, stat_length * sizeof(float));
 			}
 	} else {
 		free(net->statobj);

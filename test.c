@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 		THOpenCLHalfFloat(1);
 	}
 	THInit();
-	net = THLoadNetwork(modelsdir);
+	net = THLoadNetwork(modelsdir, 0);
 	if(net)
 	{
 		if(net->net->nelem > lastlayer)
