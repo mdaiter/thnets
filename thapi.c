@@ -285,7 +285,7 @@ void THInit()
 
 int THProcessFloat(THNETWORK *network, float *data, int batchsize, int width, int height, float **result, int *outwidth, int *outheight)
 {
-	const int color_dim = network->grayscale ? 1 : 3;
+	const unsigned int color_dim = network->grayscale ? 1 : 3;
 	int b, c, i;
 	THFloatTensor *t = THFloatTensor_new();
 	THFloatTensor *out;
@@ -354,7 +354,7 @@ int THProcessFloat(THNETWORK *network, float *data, int batchsize, int width, in
 
 int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, int width, int height, int stride, float **results, int *outwidth, int *outheight, int bgr)
 {
-	const int color_dim = network->grayscale ? 1 : 3;
+	const unsigned int color_dim = network->grayscale ? 1 : 3;
 	int i;
 	THFloatTensor *out, *t = 0;
 	THFloatStorage *st;
