@@ -285,22 +285,23 @@ void THInit()
 
 int THProcessFloat(THNETWORK *network, float *data, int batchsize, int width, int height, float **result, int *outwidth, int *outheight)
 {
+	const int color_dim = network->grayscale ? 1 : 3;
 	int b, c, i;
 	THFloatTensor *t = THFloatTensor_new();
 	THFloatTensor *out;
 	t->nDimension = 4;
 	t->size[0] = batchsize;
-	t->size[1] = 3;
+	t->size[1] = color_dim;
 	t->size[2] = height;
 	t->size[3] = width;
-	t->stride[0] = 3 * width * height;
+	t->stride[0] = color_dim * width * height;
 	t->stride[1] = width * height;
 	t->stride[2] = width;
 	t->stride[3] = 1;
 	t->storage = THFloatStorage_newwithbuffer((float *)data);
 #pragma omp parallel for private(b, c, i)
 	for(b = 0; b < batchsize; b++)
-		for(c = 0; c < 3; c++)
+		for(c = 0; c < color_dim; c++)
 			for(i = 0; i < width*height; i++)
 				data[b * t->stride[0] + c * t->stride[1] + i] =
 					(data[b * t->stride[0] + c * t->stride[1] + i] - network->mean[c]) / network->std[c];
@@ -353,6 +354,7 @@ int THProcessFloat(THNETWORK *network, float *data, int batchsize, int width, in
 
 int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, int width, int height, int stride, float **results, int *outwidth, int *outheight, int bgr)
 {
+	const int color_dim = network->grayscale ? 1 : 3;
 	int i;
 	THFloatTensor *out, *t = 0;
 	THFloatStorage *st;
