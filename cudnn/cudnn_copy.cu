@@ -10,6 +10,19 @@ extern "C" int cuda_maphostmem;
 
 #define BYTE2FLOAT 0.003921568f // 1/255
 
+__global__ void grayscale2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+{
+	dst[4*threadIdx.x + blockIdx.x * width] =
+		(src[4*threadIdx.x + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
+	dst[4*threadIdx.x+1 + blockIdx.x * width] =
+		(src[4*threadIdx.x+1 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
+	dst[4*threadIdx.x+2 + blockIdx.x * width] =
+		(src[4*threadIdx.x+2 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
+	dst[4*threadIdx.x+3 + blockIdx.x * width] =
+		(src[4*threadIdx.x+3 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
+}
+
+
 __global__ void rgb2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
 {
 	int c;
@@ -78,8 +91,41 @@ __global__ void bgr2half_kernel(unsigned short *dst, const unsigned char *src, i
 	}
 }
 
+extern "C" float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std);
 extern "C" float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
 extern "C" unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
+
+float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+{
+	unsigned char *csrc;
+	float *cmean, *cstd;
+	
+	if(cuda_maphostmem)
+	{
+		if(cuda_maphostmem == 2)
+			errcheck(cudaHostRegister((void *)src, height*srcstride, cudaHostRegisterMapped));
+		errcheck(cudaHostGetDevicePointer((void **)&csrc, (void *)src, 0));
+	} else {
+		errcheck(cudaMalloc((void **)&csrc, height * srcstride));
+		errcheck(cudaMemcpy(csrc, src, height * srcstride, cudaMemcpyHostToDevice));
+	}
+	errcheck(cudaMalloc((void **)&cmean, sizeof(*cmean)));
+	errcheck(cudaMemcpy(cmean, mean, sizeof(*cmean), cudaMemcpyHostToDevice));
+	errcheck(cudaMalloc((void **)&cstd, sizeof(*cstd)));
+	errcheck(cudaMemcpy(cstd, std, sizeof(*std), cudaMemcpyHostToDevice));
+
+	grayscale2float_kernel<<<height, width/4>>>(dst, csrc, width, height, srcstride, cmean, cstd);
+	errcheck(cudaDeviceSynchronize());
+	
+	if(cuda_maphostmem == 2)
+		cudaHostUnregister((void *)src);
+	else if(cuda_maphostmem == 0)
+		cudaFree(csrc);
+	cudaFree(cmean);
+	cudaFree(cstd);
+	
+	return dst;
+}
 
 float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr)
 {
