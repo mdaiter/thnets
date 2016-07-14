@@ -240,6 +240,11 @@ THNETWORK *THLoadNetwork(const char *path)
 					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, sizeof(net->mean));
 				else if(!strcmp(net->statobj->table->records[i].name.string.data, "std"))
 					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, sizeof(net->std));
+				/* Saw in some nets that they name it like this. Weird. */
+				else if(!strcmp(net->statobj->table->records[i].name.string.data, "mi"))
+					memcpy(net->mean, net->statobj->table->records[i].value.tensor->storage->data, sizeof(float));
+				else if(!strcmp(net->statobj->table->records[i].name.string.data, "sigma"))
+					memcpy(net->std, net->statobj->table->records[i].value.tensor->storage->data, sizeof(float));
 			}
 	} else {
 		free(net->statobj);

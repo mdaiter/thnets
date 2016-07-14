@@ -40,6 +40,7 @@ THFloatTensor *cudnn_SpatialConvolution_updateOutput(struct module *module, THFl
 	{
 		// Here we use the SpatialConvolution module to perform a linear transformation
 		errcheck(cudnnCreateTensorDescriptor(&dinput));
+		// This seems a bit restrictive... :(
 		if(input->nDimension == 1)
 			errcheck(cudnnSetTensor4dDescriptor(dinput, CUDNN_TENSOR_NCHW, floattype, 1, input->size[0], 1, 1));
 		else errcheck(cudnnSetTensor4dDescriptor(dinput, CUDNN_TENSOR_NCHW, floattype, input->size[0], input->size[1], 1, 1));
