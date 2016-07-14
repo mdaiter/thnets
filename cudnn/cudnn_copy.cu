@@ -12,14 +12,7 @@ extern "C" int cuda_maphostmem;
 
 __global__ void grayscale2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
 {
-	dst[4*threadIdx.x + blockIdx.x * width] =
-		(src[4*threadIdx.x + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
-	dst[4*threadIdx.x+1 + blockIdx.x * width] =
-		(src[4*threadIdx.x+1 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
-	dst[4*threadIdx.x+2 + blockIdx.x * width] =
-		(src[4*threadIdx.x+2 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
-	dst[4*threadIdx.x+3 + blockIdx.x * width] =
-		(src[4*threadIdx.x+3 + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
+	dst[threadIdx.x + blockIdx.x * width] = (src[threadIdx.x + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
 }
 
 
@@ -114,7 +107,7 @@ float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int
 	errcheck(cudaMalloc((void **)&cstd, sizeof(*cstd)));
 	errcheck(cudaMemcpy(cstd, std, sizeof(*std), cudaMemcpyHostToDevice));
 
-	grayscale2float_kernel<<<height, width/4>>>(dst, csrc, width, height, srcstride, cmean, cstd);
+	grayscale2float_kernel<<<height, width>>>(dst, csrc, width, height, srcstride, cmean, cstd);
 	errcheck(cudaDeviceSynchronize());
 	
 	if(cuda_maphostmem == 2)
