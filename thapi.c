@@ -371,9 +371,13 @@ int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, i
 		} else
 #endif
 		{
-			st = THCudaStorage_new(batchsize * width * height * 3);
-			for(i = 0; i < batchsize; i++)
-				cuda_rgb2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std, bgr);
+			st = THCudaStorage_new(batchsize * width * height * color_dim);
+			if (color_dim == 1)
+				for(i = 0; i < batchsize; i++)
+					cuda_rgb2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std, bgr);
+			else
+				for (i = 0; i < batchsize; i++)
+					cuda_grayscale2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
 		}
 	} else
 #endif
@@ -388,15 +392,21 @@ int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, i
 	else
 #endif
 	{
-		st = THFloatStorage_new(batchsize * width * height * 3);
-		if(bgr)
+		st = THFloatStorage_new(batchsize * width * height * color_dim);
+		if (color_dim == 3) {
+			if(bgr)
+#pragma omp parallel for if(batchsize>1) private(i)
+				for(i = 0; i < batchsize; i++)
+					bgr2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
+			else
+#pragma omp parallel for if(batchsize>1) private(i)
+				for(i = 0; i < batchsize; i++)
+					rgb2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
+		} else {
 #pragma omp parallel for if(batchsize>1) private(i)
 			for(i = 0; i < batchsize; i++)
-				bgr2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
-		else
-#pragma omp parallel for if(batchsize>1) private(i)
-			for(i = 0; i < batchsize; i++)
-				rgb2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
+				grayscale2float(st->data + i * width * height, images[i], width, height, stride, network->mean, network->std);
+		}
 	}
 	if(!t)
 	{
@@ -405,7 +415,7 @@ int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, i
 		if(batchsize == 1)
 		{
 			t->nDimension = 3;
-			t->size[0] = 3;
+			t->size[0] = color_dim;
 			t->size[1] = height;
 			t->size[2] = width;
 			t->stride[0] = width * height;
@@ -414,10 +424,10 @@ int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, i
 		} else {
 			t->nDimension = 4;
 			t->size[0] = batchsize;
-			t->size[1] = 3;
+			t->size[1] = color_dim;
 			t->size[2] = height;
 			t->size[3] = width;
-			t->stride[0] = 3 * width * height;
+			t->stride[0] = color_dim * width * height;
 			t->stride[1] = width * height;
 			t->stride[2] = width;
 			t->stride[3] = 1;
