@@ -15,7 +15,6 @@ __global__ void grayscale2float_kernel(float *dst, const unsigned char *src, int
 	dst[threadIdx.x + blockIdx.x * width] = (src[threadIdx.x + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
 }
 
-
 __global__ void rgb2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
 {
 	int c;
