@@ -4,6 +4,8 @@
 #include <sys/time.h>
 #include "thnets.h"
 
+#define USE_GRAYSCALE 1
+
 typedef struct {
 	char filename[255];
 	unsigned char *bitmap;
@@ -105,7 +107,7 @@ int main(int argc, char **argv)
 		THOpenCLHalfFloat(1);
 	}
 	THInit();
-	net = THLoadNetwork(modelsdir, 0);
+	net = THLoadNetwork(modelsdir, USE_GRAYSCALE);
 	if(net)
 	{
 		if(net->net->nelem > lastlayer)
@@ -165,12 +167,13 @@ int main(int argc, char **argv)
 				unsigned char *bitmaps[256];
 				for(i = 0; i < nbatch; i++)
 					bitmaps[i] = image.bitmap;
+				const unsigned int color_dim = USE_GRAYSCALE ? 1 : 3;
 				// In CuDNN the first one has to do some initializations, so don't count it for timing
 				if(alg == 3 || alg == 5)
-					THProcessImages(net, bitmaps, nbatch, image.width, image.height, 3*image.width, &result, &outwidth, &outheight, 0);
+					THProcessImages(net, bitmaps, nbatch, image.width, image.height, color_dim*image.width, &result, &outwidth, &outheight, 0);
 				t = seconds();
 				for(i = 0; i < runs; i++)
-					n = THProcessImages(net, bitmaps, nbatch, image.width, image.height, 3*image.width, &result, &outwidth, &outheight, 0);
+					n = THProcessImages(net, bitmaps, nbatch, image.width, image.height, color_dim*image.width, &result, &outwidth, &outheight, 0);
 				t = (seconds() - t) / runs;
 #ifdef USECUDAHOSTALLOC
 				cudaFreeHost(image.bitmap);
