@@ -31,6 +31,17 @@ static void rgb2float(float *dst, const unsigned char *src, int width, int heigh
 				dst[j + (i + c * height) * width] = (src[c + 3*j + srcstride*i] * BYTE2FLOAT - mean[c]) * std1[c];
 }
 
+static void grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+{
+	int i, j;
+	const float std1 = 1 / (*std);
+
+#pragma omp parallel for private(i, j)
+	for(i = 0; i < height; i++)
+		for(j = 0; j < width; j++)
+			dst[j + i * width] = (src[j + srcstride*i] * BYTE2FLOAT - (*mean)) * std1;
+}
+
 static void bgr2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
 {
 	int c, i, j;
