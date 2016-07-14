@@ -187,7 +187,7 @@ THFloatTensor *forward(struct network *net, THFloatTensor *in)
 	return in;
 }
 
-THNETWORK *THLoadNetwork(const char *path)
+THNETWORK *THLoadNetwork(const char *path, bool grayscale)
 {
 	char tmppath[255];
 	int i, longsize = 8;
