@@ -62,6 +62,7 @@ static int readstring(struct thfile *f, char **s, int *size)
 
 static int scalartype(const char *type)
 {
+	printf("Scalar type: %s\n", type);
 	if(!strcmp(type, "Byte"))
 		return TYPE_BYTE;
 	if(!strcmp(type, "Char"))
@@ -85,16 +86,16 @@ static int scalarsize(int type)
 	{
 	case TYPE_BYTE:
 	case TYPE_CHAR:
-		return 1;
+		return sizeof(char);
 	case TYPE_SHORT:
-		return 2;
+		return sizeof(short);
 	case TYPE_LONG:
 		return sizeof(long);
 	case TYPE_INT:
 	case TYPE_FLOAT:
-		return 4;
+		return sizeof(float);
 	case TYPE_DOUBLE:
-		return 8;
+		return sizeof(double);
 	default:
 		return ERR_CORRUPTED;
 	}
@@ -306,6 +307,7 @@ static int readtorch(struct thfile *f, struct thobject *obj)
 	free(s);
 	if(readstring(f, &s, &size))
 		return ERR_READFILE;
+	printf("Comparing to Tensor, storage, etc: %s\n", s);
 	if(!memcmp(s, "torch.", 6) && !strcmp(s + strlen(s) - 6, "Tensor"))
 	{
 		s[strlen(s) - 6] = 0;

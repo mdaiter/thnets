@@ -8,7 +8,7 @@
 static int lasterror;
 static short TB_YUR[256], TB_YUB[256], TB_YUGU[256], TB_YUGV[256], TB_Y[256];
 static unsigned char TB_SAT[1024 + 1024 + 256];
-int th_debug, th_profile;
+int th_debug = 1, th_profile;
 
 #ifdef CUDNN
 int cuda_maphostmem;
@@ -196,10 +196,12 @@ THNETWORK *THLoadNetwork(const char *path, int grayscale)
 	sprintf(tmppath, "%s/model.net", path);
 	net->netobj = malloc(sizeof(*net->netobj));
 	lasterror = loadtorch(tmppath, net->netobj, longsize);
+	printf("Loaded Torch lib prelib\n");
 	if(lasterror == ERR_CORRUPTED)
 		lasterror = loadtorch(tmppath, net->netobj, longsize = 4);
 	if(lasterror)
 	{
+		printf("lasterror\n");
 		free(net->netobj);
 		free(net);
 		return 0;
@@ -215,6 +217,7 @@ THNETWORK *THLoadNetwork(const char *path, int grayscale)
 		free(net);
 		return 0;
 	}
+	printf("Loaded net\n");
 	net->std[0] = net->std[1] = net->std[2] = 1;
 	net->mean[0] = net->mean[1] = net->mean[2] = 0;
 	sprintf(tmppath, "%s/stat.t7", path);
