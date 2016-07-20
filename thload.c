@@ -17,7 +17,7 @@ int freeobject(struct thobject *obj);
 
 static int readint(struct thfile *f, int *v)
 {
-	return fread(v, sizeof(*v), 1, f->fp) == 1 ? 0 : ERR_READFILE;
+	return fread(v, sizeof(int), 1, f->fp) == 1 ? 0 : ERR_READFILE;
 }
 
 static int readlong(struct thfile *f, long *v)
@@ -77,11 +77,13 @@ static int scalartype(const char *type)
 		return TYPE_FLOAT;
 	if(!strcmp(type, "Double"))
 		return TYPE_DOUBLE;
+	printf("Corrupted from scalar type comparison\n");
 	return ERR_CORRUPTED;
 }
 
 static int scalarsize(int type)
 {
+	printf("Scalar size: %d\n", type);
 	switch(type)
 	{
 	case TYPE_BYTE:
@@ -243,6 +245,7 @@ static int readtorchtensor(const char *type, struct thfile *f, struct thobject *
 	}
 	if(tmp.type != TYPE_STORAGE && tmp.type != TYPE_NIL)
 	{
+		printf("Freeing object. Wasn't storage. Type is either nil or not storage\n");
 		freeobject(&tmp);
 		return ERR_CORRUPTED;
 	}
@@ -310,12 +313,14 @@ static int readtorch(struct thfile *f, struct thobject *obj)
 	printf("Comparing to Tensor, storage, etc: %s\n", s);
 	if(!memcmp(s, "torch.", 6) && !strcmp(s + strlen(s) - 6, "Tensor"))
 	{
+		printf("Attempting to load tensor.\n");
 		s[strlen(s) - 6] = 0;
 		rc = readtorchtensor(s+6, f, obj, idx);
 		free(s);
 		return rc;
 	} else if(!memcmp(s, "torch.", 6) && !strcmp(s + strlen(s) - 7, "Storage"))
 	{
+		printf("Attempting to load storage\n");
 		s[strlen(s) - 7] = 0;
 		rc = readtorchstorage(s+6, f, obj, idx);
 		free(s);
@@ -354,6 +359,7 @@ static int readobject(struct thfile *f, struct thobject *obj)
 	memset(obj, 0, sizeof(*obj));
 	if(readint(f, &obj->type))
 		return ERR_READFILE;
+	printf("Reading object. Object type: %d\n", obj->type);
 	switch(obj->type)
 	{
 	case TYPE_NIL:
@@ -383,10 +389,13 @@ static int readobject(struct thfile *f, struct thobject *obj)
 	case LEGACY_TYPE_RECUR_FUNCTION:
 	case TYPE_RECUR_FUNCTION:
 		// Read it and ignore it
+		rc = 0;
 		if(readint(f, &rc))	// Index
 			return ERR_READFILE;
+		printf("Found recursive function with RC index: %d\n", rc);
 		if(readint(f, &rc))	// Length
 			return ERR_READFILE;
+		printf("Found recursive function with RC length: %d\n", rc);
 		if(fseek(f->fp, rc, SEEK_CUR))
 			return ERR_READFILE;
 		f->idx++;
@@ -394,6 +403,7 @@ static int readobject(struct thfile *f, struct thobject *obj)
 		{
 			struct thobject tmp;
 			rc = readobject(f, &tmp);
+			printf("Found recursive function with RC after readobject: %d\n", rc);
 			freeobject(&tmp);
 		}
 		if(rc)

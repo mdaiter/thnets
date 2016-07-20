@@ -17,7 +17,7 @@ THFloatTensor *cudnn_SpatialMaxPooling_updateOutput(struct module *module, THFlo
 
 	errcheck(THcudnn_TensorDescriptor(&dinput, input));
 	errcheck(cudnnCreatePoolingDescriptor(&dpool));
-	errcheck(cudnnSetPooling2dDescriptor(dpool, CUDNN_POOLING_MAX, kH, kW, padH, padW, dH, dW));
+	errcheck(cudnnSetPooling2dDescriptor(dpool, CUDNN_POOLING_MAX, CUDNN_PROPAGATE_NAN, kH, kW, padH, padW, dH, dW));
 	errcheck(cudnnGetPoolingNdForwardOutputDim(dpool, dinput, 4, sizes));
 	THCudaTensor_resize4d(output, sizes[0], sizes[1], sizes[2], sizes[3]);
 	errcheck(THcudnn_TensorDescriptor(&doutput, output));
