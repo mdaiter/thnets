@@ -236,6 +236,7 @@ THNETWORK *THLoadNetwork(const char *path, int grayscale)
 			free(net);
 			return 0;
 		}
+		net->grayscale = grayscale;
 		const int stat_length = grayscale ? 1 : 3;
 		for(i = 0; i < net->statobj->table->nelem; i++)
 			if(net->statobj->table->records[i].name.type == TYPE_STRING)

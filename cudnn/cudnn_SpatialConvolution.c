@@ -5,8 +5,8 @@
 
 THFloatTensor *cudnn_SpatialConvolution_updateOutput(struct module *module, THFloatTensor *input)
 {
-	int kW = module->SpatialConvolution.kW;
-	int kH = module->SpatialConvolution.kH;
+	const int kW = module->SpatialConvolution.kW;
+	const int kH = module->SpatialConvolution.kH;
 	int dW = module->SpatialConvolution.dW;
 	int dH = module->SpatialConvolution.dH;
 	int padW = module->SpatialConvolution.padW;

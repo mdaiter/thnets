@@ -13,11 +13,11 @@ THFloatTensor *cudnn_Threshold_updateOutput(struct module *module, THFloatTensor
 	else THCudaTensor_resize4d(output, input->size[0], input->size[1], input->size[2], input->size[3]);
 	errcheck(THcudnn_TensorDescriptor(&doutput, output));
 
-  cudnnActivationDescriptor_t* activ_desc;
-	cudnnCreateActivationDescriptor(activ_desc);
-	cudnnSetActivationDescriptor(*activ_desc, CUDNN_ACTIVATION_TANH, CUDNN_PROPAGATE_NAN, 0.0);
+  cudnnActivationDescriptor_t activ_desc;
+	cudnnCreateActivationDescriptor(&activ_desc);
+	cudnnSetActivationDescriptor(activ_desc, CUDNN_ACTIVATION_TANH, CUDNN_PROPAGATE_NAN, 0.0);
 
-	errcheck(cudnnActivationForward(THcudnn_getHandle(), *activ_desc, &one, dinput, THFloatTensor_data(input), &zero,
+	errcheck(cudnnActivationForward(THcudnn_getHandle(), activ_desc, &one, dinput, THFloatTensor_data(input), &zero,
 		doutput, THFloatTensor_data(output)));
 
 	cudnnDestroyTensorDescriptor(dinput);
