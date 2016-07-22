@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 {
 	THNETWORK *net;
 	float *result;
-	int i, n = 0, rc, outwidth, outheight, runs = 1, print = 0, alg = 2, nbatch = 1,
+	int i, n = 0, rc, outwidth, outheight, runs = 1, print = 1, alg = 2, nbatch = 1,
 		lastlayer = 0x7fffffff, maxoutput = 0x7fffffff;
 	const char *modelsdir = 0, *inputfile = 0;
 
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	{
 		if(net->net->nelem > lastlayer)
 			net->net->nelem = lastlayer;
-		THMakeSpatial(net);
+		//THMakeSpatial(net);
 		if(alg == 0)
 			THUseSpatialConvolutionMM(net, 0);
 		else if(alg == 1 || alg == 2)
