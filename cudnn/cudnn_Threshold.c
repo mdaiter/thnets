@@ -15,7 +15,7 @@ THFloatTensor *cudnn_Threshold_updateOutput(struct module *module, THFloatTensor
 
   cudnnActivationDescriptor_t activ_desc;
 	cudnnCreateActivationDescriptor(&activ_desc);
-	cudnnSetActivationDescriptor(activ_desc, CUDNN_ACTIVATION_TANH, CUDNN_PROPAGATE_NAN, 0.0);
+	cudnnSetActivationDescriptor(activ_desc, CUDNN_ACTIVATION_TANH, CUDNN_NOT_PROPAGATE_NAN, 0.0);
 
 	errcheck(cudnnActivationForward(THcudnn_getHandle(), activ_desc, &one, dinput, THFloatTensor_data(input), &zero,
 		doutput, THFloatTensor_data(output)));

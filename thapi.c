@@ -196,7 +196,6 @@ THNETWORK *THLoadNetwork(const char *path, int grayscale)
 	sprintf(tmppath, "%s/model.net", path);
 	net->netobj = malloc(sizeof(*net->netobj));
 	lasterror = loadtorch(tmppath, net->netobj, longsize);
-	printf("Loaded Torch lib prelib\n");
 	if(lasterror == ERR_CORRUPTED)
 		lasterror = loadtorch(tmppath, net->netobj, longsize = 4);
 	if(lasterror)
