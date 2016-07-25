@@ -34,12 +34,12 @@ static void rgb2float(float *dst, const unsigned char *src, int width, int heigh
 static void grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
 {
 	int i, j;
-	const float std1 = 1 / (*std);
+	const float std1 = 1 / std[0];
 
 #pragma omp parallel for private(i, j)
 	for(i = 0; i < height; i++)
 		for(j = 0; j < width; j++)
-			dst[j + i * width] = (src[j + srcstride*i] * BYTE2FLOAT - (*mean)) * std1;
+			dst[j + i * width] = (src[j + srcstride*i] * BYTE2FLOAT - mean[0]) * std1;
 }
 
 static void bgr2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
@@ -377,12 +377,12 @@ int THProcessImages(THNETWORK *network, unsigned char **images, int batchsize, i
 #endif
 		{
 			st = THCudaStorage_new(batchsize * width * height * color_dim);
-			if (color_dim == 1)
+			if (color_dim == 3)
 				for(i = 0; i < batchsize; i++)
 					cuda_rgb2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std, bgr);
 			else
 				for (i = 0; i < batchsize; i++)
-					cuda_grayscale2float(st->data + i * width * height * 3, images[i], width, height, stride, network->mean, network->std);
+					cuda_grayscale2float(st->data + i * width * height, images[i], width, height, stride, network->mean, network->std);
 		}
 	} else
 #endif
