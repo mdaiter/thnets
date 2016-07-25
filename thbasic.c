@@ -113,7 +113,7 @@ void THFloatTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2
 
 void THFloatTensor_resize2d(THFloatTensor *t, long size0, long size1)
 {
-	long nElement = THFloatTensor_nElement(t);
+	const long nElement = THFloatTensor_nElement(t);
 	t->nDimension = 2;
 	t->size[0] = size0;
 	t->size[1] = size1;
@@ -129,7 +129,7 @@ void THFloatTensor_resize2d(THFloatTensor *t, long size0, long size1)
 
 void THFloatTensor_resize1d(THFloatTensor *t, long size0)
 {
-	long nElement = THFloatTensor_nElement(t);
+	const long nElement = THFloatTensor_nElement(t);
 	t->nDimension = 1;
 	t->size[0] = size0;
 	t->stride[0] = 1;
@@ -218,8 +218,8 @@ void THFloatTensor_resizeAs(THFloatTensor *tdst, THFloatTensor *tsrc)
 {
 	if(tsrc == tdst)
 		return;
-	long nelemdst = THFloatTensor_nElement(tdst);
-	long nelemsrc = THFloatTensor_nElement(tsrc);
+	const long nelemdst = THFloatTensor_nElement(tdst);
+	const long nelemsrc = THFloatTensor_nElement(tsrc);
 	tdst->nDimension = tsrc->nDimension;
 	memcpy(tdst->size, tsrc->size, sizeof(tsrc->size));
 	memcpy(tdst->stride, tsrc->stride, sizeof(tsrc->stride));
@@ -618,7 +618,7 @@ void THFloatTensor_mul(THFloatTensor *r_, THFloatTensor *t, float value)
 	float *tp = THFloatTensor_data(t);
 	float *rp = THFloatTensor_data(r_);
 	long i;
-	long sz = THFloatTensor_nElement(t);
+	const long sz = THFloatTensor_nElement(t);
 
 #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
 	for (i=0; i<sz; i++)

@@ -10,12 +10,12 @@ extern "C" int cuda_maphostmem;
 
 #define BYTE2FLOAT 0.003921568f // 1/255
 
-__global__ void grayscale2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+__global__ void grayscale2float_kernel(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	dst[threadIdx.x + blockIdx.x * width] = (src[threadIdx.x + srcstride*blockIdx.x] * BYTE2FLOAT - mean[0]) / std[0];
 }
 
-__global__ void rgb2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+__global__ void rgb2float_kernel(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	int c;
 
@@ -32,7 +32,7 @@ __global__ void rgb2float_kernel(float *dst, const unsigned char *src, int width
 	}
 }
 
-__global__ void bgr2float_kernel(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+__global__ void bgr2float_kernel(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	int c;
 
@@ -49,7 +49,7 @@ __global__ void bgr2float_kernel(float *dst, const unsigned char *src, int width
 	}
 }
 
-__global__ void rgb2half_kernel(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+__global__ void rgb2half_kernel(unsigned short *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	int c;
 
@@ -66,7 +66,7 @@ __global__ void rgb2half_kernel(unsigned short *dst, const unsigned char *src, i
 	}
 }
 
-__global__ void bgr2half_kernel(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+__global__ void bgr2half_kernel(unsigned short *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	int c;
 
@@ -83,11 +83,11 @@ __global__ void bgr2half_kernel(unsigned short *dst, const unsigned char *src, i
 	}
 }
 
-extern "C" float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std);
-extern "C" float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
-extern "C" unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
+extern "C" float *cuda_grayscale2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std);
+extern "C" float *cuda_rgb2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr);
+extern "C" unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, const int bgr);
 
-float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std)
+float *cuda_grayscale2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {
 	unsigned char *csrc;
 	float *cmean, *cstd;
@@ -119,7 +119,7 @@ float *cuda_grayscale2float(float *dst, const unsigned char *src, int width, int
 	return dst;
 }
 
-float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr)
+float *cuda_rgb2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr)
 {
 	unsigned char *csrc;
 	float *cmean, *cstd;
@@ -153,7 +153,7 @@ float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int heigh
 	return dst;
 }
 
-unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr)
+unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr)
 {
 	unsigned char *csrc;
 	float *cmean, *cstd;
@@ -186,28 +186,28 @@ unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int
 	return dst;
 }
 
-__global__ void fillwithone(float *dst, int stride)
+__global__ void fillwithone(float *dst, const int stride)
 {
 	dst[threadIdx.x + blockIdx.x * stride] = 1;
 }
 
 #ifdef HAVEHALF
-__global__ void fillwithoneH(__half *dst, int stride)
+__global__ void fillwithoneH(__half *dst, const int stride)
 {
 	dst[threadIdx.x + blockIdx.x * stride] = __float2half(1);
 }
 #endif
 
-extern "C" void cuda_fillwithone(int n1, int n2, float *data, int stride);
-extern "C" void cuda_fillwithoneH(int n1, int n2, float *data, int stride);
+extern "C" void cuda_fillwithone(const int n1, const int n2, float *data, const int stride);
+extern "C" void cuda_fillwithoneH(const int n1, const int n2, float *data, const int stride);
 
-void cuda_fillwithone(int n1, int n2, float *data, int stride)
+void cuda_fillwithone(const int n1, const int n2, float *data, const int stride)
 {
 	fillwithone<<<n1, n2>>>(data, stride);
 }
 
 #ifdef HAVEHALF
-void cuda_fillwithoneH(int n1, int n2, float *data, int stride)
+void cuda_fillwithoneH(const int n1, const int n2, float *data, const int stride)
 {
 	fillwithoneH<<<n1, n2>>>((__half *)data, stride);
 }

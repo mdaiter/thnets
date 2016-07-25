@@ -52,7 +52,7 @@ int THcudnn_TensorDescriptor(cudnnTensorDescriptor_t *d, THFloatTensor *t)
 THFloatStorage *THCudaStorage_new(long size)
 {
 	THFloatStorage *s = malloc(sizeof(*s));
-	int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+	const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 	errcheck(cudaMalloc((void **)&s->data, size * datasize));
 	s->nref = 1;
 	s->mustfree = 2;
@@ -69,7 +69,7 @@ THFloatTensor *THCudaTensor_newFromFloatTensor(THFloatTensor *t)
 		n->storage->nref = 1;
 		n->storage->mustfree = 2;
 		n->storageOffset = 0;
-		int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+		const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 		errcheck(cudaMalloc((void **)&n->storage->data, THFloatTensor_nElement(t) * datasize));
 		errcheck(cudaMemcpy(n->storage->data, THFloatTensor_data(t), THFloatTensor_nElement(t) * datasize, cudaMemcpyHostToDevice));
 	}
@@ -78,7 +78,7 @@ THFloatTensor *THCudaTensor_newFromFloatTensor(THFloatTensor *t)
 
 THFloatTensor *THFloatTensor_newFromCudaTensor(THFloatTensor *t)
 {
-	THFloatTensor *n = malloc(sizeof(*n));
+	THFloatTensor *n = (THFloatTensor *)malloc(sizeof(*n));
 	memcpy(n, t, sizeof(*n));
 	if(t->storage)
 	{
@@ -94,7 +94,7 @@ THFloatTensor *THFloatTensor_newFromCudaTensor(THFloatTensor *t)
 
 void THCudaTensor_resize4d(THFloatTensor *t, long size0, long size1, long size2, long size3)
 {
-	long nelemorig = THFloatTensor_nElement(t);
+	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 4;
 	t->size[0] = size0;
 	t->size[1] = size1;
@@ -109,7 +109,7 @@ void THCudaTensor_resize4d(THFloatTensor *t, long size0, long size1, long size2,
 		t->storage = malloc(sizeof(*t->storage));
 		t->storage->nref = 1;
 		t->storage->mustfree = 2;
-		int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+		const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 		errcheck(cudaMalloc((void **)&t->storage->data, THFloatTensor_nElement(t) * datasize));
 	} else if(nelemorig != THFloatTensor_nElement(t))
 		THError("Resizing of CUDA tensors not supported");
@@ -117,7 +117,7 @@ void THCudaTensor_resize4d(THFloatTensor *t, long size0, long size1, long size2,
 
 void THCudaTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2)
 {
-	long nelemorig = THFloatTensor_nElement(t);
+	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 3;
 	t->size[0] = size0;
 	t->size[1] = size1;
@@ -130,7 +130,7 @@ void THCudaTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2)
 		t->storage = malloc(sizeof(*t->storage));
 		t->storage->nref = 1;
 		t->storage->mustfree = 2;
-		int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+		const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 		errcheck(cudaMalloc((void **)&t->storage->data, THFloatTensor_nElement(t) * datasize));
 	} else if(nelemorig != THFloatTensor_nElement(t))
 		THError("Resizing of CUDA tensors not supported");
@@ -138,7 +138,7 @@ void THCudaTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2)
 
 void THCudaTensor_resize2d(THFloatTensor *t, long size0, long size1)
 {
-	long nelemorig = THFloatTensor_nElement(t);
+	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 2;
 	t->size[0] = size0;
 	t->size[1] = size1;
@@ -149,7 +149,7 @@ void THCudaTensor_resize2d(THFloatTensor *t, long size0, long size1)
 		t->storage = malloc(sizeof(*t->storage));
 		t->storage->nref = 1;
 		t->storage->mustfree = 2;
-		int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+		const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 		errcheck(cudaMalloc((void **)&t->storage->data, THFloatTensor_nElement(t) * datasize));
 	} else if(nelemorig != THFloatTensor_nElement(t))
 		THError("Resizing of CUDA tensors not supported");
@@ -157,7 +157,7 @@ void THCudaTensor_resize2d(THFloatTensor *t, long size0, long size1)
 
 void THCudaTensor_resize1d(THFloatTensor *t, long size0)
 {
-	long nelemorig = THFloatTensor_nElement(t);
+	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 1;
 	t->size[0] = size0;
 	t->stride[0] = 1;
@@ -166,7 +166,7 @@ void THCudaTensor_resize1d(THFloatTensor *t, long size0)
 		t->storage = malloc(sizeof(*t->storage));
 		t->storage->nref = 1;
 		t->storage->mustfree = 2;
-		int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
+		const int datasize = floattype == CUDNN_DATA_HALF ? 2 : 4;
 		errcheck(cudaMalloc((void **)&t->storage->data, THFloatTensor_nElement(t) * datasize));
 	} else if(nelemorig != THFloatTensor_nElement(t))
 		THError("Resizing of CUDA tensors not supported");
@@ -176,7 +176,7 @@ void THCudaTensor_resizeAs(THFloatTensor *tdst, THFloatTensor *tsrc)
 {
 	if(tsrc == tdst)
 		return;
-	long nelemsrc = THFloatTensor_nElement(tsrc);
+	const long nelemsrc = THFloatTensor_nElement(tsrc);
 	tdst->nDimension = tsrc->nDimension;
 	memcpy(tdst->size, tsrc->size, sizeof(tsrc->size));
 	memcpy(tdst->stride, tsrc->stride, sizeof(tsrc->stride));
@@ -189,7 +189,7 @@ void THCudaTensor_resizeAs(THFloatTensor *tdst, THFloatTensor *tsrc)
 struct network *THcudnn_ToCUDNN(struct network *net)
 {
 	int i;
-	struct network *nn = malloc(sizeof(*nn));
+	struct network *nn = (struct network *)malloc(sizeof(*nn));
 
 	nn->nelem = net->nelem;
 	nn->modules = malloc(sizeof(net->modules[0]) * net->nelem);
@@ -295,8 +295,8 @@ struct network *THcudnn_ToCUDNN(struct network *net)
 
 void adjustLd(char transa, char transb, long m, long n, long k, long *lda, long *ldb, long *ldc)
 {
-	int transa_ = ((transa == 't') || (transa == 'T'));
-	int transb_ = ((transb == 't') || (transb == 'T'));
+	const int transa_ = ((transa == 't') || (transa == 'T'));
+	const int transb_ = ((transb == 't') || (transb == 'T'));
 
 	if(n == 1)
 		*ldc = m;
@@ -330,12 +330,12 @@ void THCudaBlas_gemm(char transa, char transb, long m, long n, long k, float alp
 
 	if( (m <= INT_MAX) && (n <= INT_MAX) && (k <= INT_MAX) && (lda <= INT_MAX)  && (ldb <= INT_MAX) && (ldc <= INT_MAX) )
 	{
-		int i_m = (int)m;
-		int i_n = (int)n;
-		int i_k = (int)k;
-		int i_lda = (int)lda;
-		int i_ldb = (int)ldb;
-		int i_ldc = (int)ldc;
+		const int i_m = (int)m;
+		const int i_n = (int)n;
+		const int i_k = (int)k;
+		const int i_lda = (int)lda;
+		const int i_ldb = (int)ldb;
+		const int i_ldc = (int)ldc;
 
 #ifdef HAVEFP16
 		if(floattype == CUDNN_DATA_HALF)
@@ -359,32 +359,38 @@ void THCudaBlas_gemm(char transa, char transb, long m, long n, long k, float alp
 
 void THCudaTensor_Ones(THFloatTensor *t)
 {
-	int n1 = 0, n2 = 0, stride = 0;
-	
 	if(t->nDimension == 2)
 	{
-		n1 = t->size[0];
-		n2 = t->size[1];
-		stride = t->stride[0];
+		const int n1 = t->size[0];
+		const int n2 = t->size[1];
+		const int stride = t->stride[0];
+		#ifdef HAVEFP16
+		if(floattype == CUDNN_DATA_HALF)
+			cuda_fillwithoneH(n1, n2, THFloatTensor_data(t), stride);
+		else
+		#endif
+			cuda_fillwithone(n1, n2, THFloatTensor_data(t), stride);
+
 	} else if(t->nDimension == 1)
 	{
-		n1 = 1;
-		n2 = t->size[0];
-	} else THError("Unsupported nDimension for THCudaTensor_Ones");
+		const int n1 = 1;
+		const int n2 = t->size[0];
+		const int stride = 0;
+		#ifdef HAVEFP16
+		if(floattype == CUDNN_DATA_HALF)
+			cuda_fillwithoneH(n1, n2, THFloatTensor_data(t), stride);
+		else
+		#endif
+			cuda_fillwithone(n1, n2, THFloatTensor_data(t), stride);
 
-#ifdef HAVEFP16
-	if(floattype == CUDNN_DATA_HALF)
-		cuda_fillwithoneH(n1, n2, THFloatTensor_data(t), stride);
-	else
-#endif
-		cuda_fillwithone(n1, n2, THFloatTensor_data(t), stride);
+	} else THError("Unsupported nDimension for THCudaTensor_Ones");
 }
 
 #ifdef HAVEFP16
 
 THFloatTensor *THHalfCudaTensor_newFromFloatTensor(THFloatTensor *t)
 {
-	THFloatTensor *n = malloc(sizeof(*n));
+	THFloatTensor *n = (THFloatTensor *)malloc(sizeof(*n));
 	memcpy(n, t, sizeof(*n));
 	if(t->storage)
 	{

@@ -640,7 +640,7 @@ int THUseSpatialConvolutionMM(THNETWORK *network, int mm_type)
 THNETWORK *THCreateCudaNetwork(THNETWORK *net)
 {
 #ifdef CUDNN
-	THNETWORK *nn = malloc(sizeof(*nn));
+	THNETWORK *nn = (THNETWORK* )malloc(sizeof(*nn));
 	memcpy(nn, net, sizeof(*nn));
 	nn->netobj = 0;
 	nn->statobj = 0;
@@ -680,7 +680,7 @@ int THOpenCLHalfFloat(int enable)
 THNETWORK *THCreateOpenCLNetwork(THNETWORK *net)
 {
 #ifdef OPENCL
-	THNETWORK *nn = malloc(sizeof(*nn));
+	THNETWORK *nn = (THNETWORK *)malloc(sizeof(*nn));
 	memcpy(nn, net, sizeof(*nn));
 	nn->netobj = 0;
 	nn->statobj = 0;
@@ -694,7 +694,7 @@ THNETWORK *THCreateOpenCLNetwork(THNETWORK *net)
 THNETWORK *THCreateLowpNetwork(THNETWORK *net, float range)
 {
 #ifdef LOWP
-	THNETWORK *nn = malloc(sizeof(*nn));
+	THNETWORK *nn = (THNETOWRK *)malloc(sizeof(*nn));
 	memcpy(nn, net, sizeof(*nn));
 	nn->netobj = 0;
 	nn->statobj = 0;

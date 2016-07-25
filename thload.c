@@ -186,7 +186,7 @@ static int readtorchstorage(const char *type, struct thfile *f, struct thobject 
 	if(obj->storage->scalartype == TYPE_LONG && f->longsize > 0 && f->longsize == 4 && sizeof(long) == 8)
 	{
 		long i;
-		int *tmp = malloc(obj->storage->nelem * 4);
+		int *tmp = (int *)malloc(obj->storage->nelem * 4);
 		if(!tmp)
 			THError("Out of memory trying to allocate %ld bytes", obj->storage->nelem * 4);
 		if(fread(tmp, 4, obj->storage->nelem, f->fp) != obj->storage->nelem)
@@ -197,7 +197,7 @@ static int readtorchstorage(const char *type, struct thfile *f, struct thobject 
 	} else if(obj->storage->scalartype == TYPE_LONG && f->longsize > 0 && f->longsize == 8 && sizeof(long) == 4)
 	{
 		long i;
-		long *tmp = malloc(obj->storage->nelem * 8);
+		long *tmp = (long *)malloc(obj->storage->nelem * 8);
 		if(!tmp)
 			THError("Out of memory trying to allocate %ld bytes", obj->storage->nelem * 8);
 		if(fread(tmp, 8, obj->storage->nelem, f->fp) != obj->storage->nelem)
@@ -233,7 +233,7 @@ static int readtorchtensor(const char *type, struct thfile *f, struct thobject *
 	if(readlong(f, &obj->tensor->storageoffset))
 		return ERR_READFILE;
 	obj->tensor->storageoffset--;
-	int curidx = f->idx;
+	const int curidx = f->idx;
 	rc = readobject(f, &tmp);
 	if(rc)
 	{
@@ -328,7 +328,7 @@ static int readtorch(struct thfile *f, struct thobject *obj)
 		obj->nnmodule->idx = idx;
 		obj->nnmodule->nrefs = 1;
 		obj->nnmodule->name = s;
-		int curidx = f->idx;
+		const int curidx = f->idx;
 		rc = readobject(f, &tmp);
 		if(rc)
 		{
@@ -412,13 +412,13 @@ int loadtorch(const char *path, struct thobject *obj, int longsize)
 	FILE *fp = fopen(path, "rb");
 	if(!fp)
 		return ERR_OPENFILE;
-	struct thfile *f = malloc(sizeof(*f));
+	struct thfile *f = (struct thfile*)malloc(sizeof(*f));
 	f->fp = fp;
 	f->idx = 1;
 	f->longsize = longsize;
 	f->refalloc = 1000;
 	f->refobjects = malloc(f->refalloc * sizeof(*f->refobjects));
-	int rc = readobject(f, obj);
+	const int rc = readobject(f, obj);
 	fclose(fp);
 	free(f->refobjects);
 	free(f);
@@ -682,7 +682,7 @@ void *TableGetStorage(struct table *t, const char *name, int *nelem)
 		if(t->records[i].name.type == TYPE_STRING && !strcmp(t->records[i].name.string.data, name) &&
 			t->records[i].value.type == TYPE_STORAGE)
 		{
-			struct storage *tt = t->records[i].value.storage;
+			const struct storage *tt = t->records[i].value.storage;
 			*nelem = tt->nelem;
 			return tt->data;
 		}

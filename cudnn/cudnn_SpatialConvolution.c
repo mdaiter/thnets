@@ -7,10 +7,11 @@ THFloatTensor *cudnn_SpatialConvolution_updateOutput(struct module *module, THFl
 {
 	const int kW = module->SpatialConvolution.kW;
 	const int kH = module->SpatialConvolution.kH;
-	int dW = module->SpatialConvolution.dW;
-	int dH = module->SpatialConvolution.dH;
-	int padW = module->SpatialConvolution.padW;
-	int padH = module->SpatialConvolution.padH;
+	const int dW = module->SpatialConvolution.dW;
+	const int dH = module->SpatialConvolution.dH;
+	const int padW = module->SpatialConvolution.padW;
+	const int padH = module->SpatialConvolution.padH;
+	// For some reason, making these const and passing to non-const params slows down the entire operation
 	int nInputPlane  = module->SpatialConvolution.nInputPlane;
 	int nOutputPlane = module->SpatialConvolution.nOutputPlane;
 

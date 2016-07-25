@@ -8,10 +8,10 @@ THFloatTensor *cudnn_SpatialBatchNormalization_updateOutput(struct module *modul
 	THFloatTensor *weight = module->SpatialBatchNormalization.weight;
 	THFloatTensor *bias = module->SpatialBatchNormalization.bias;
 
-	double eps = module->SpatialBatchNormalization.eps;
+	const double eps = module->SpatialBatchNormalization.eps;
 
 	cudnnTensorDescriptor_t dinput, doutput, dscalebiasmeanvar;
-	float one = 1, zero = 0;
+	const float one = 1, zero = 0;
 
 	THCudaTensor_resizeAs(output, input);
 	errcheck(THcudnn_TensorDescriptor(&dinput, input));
