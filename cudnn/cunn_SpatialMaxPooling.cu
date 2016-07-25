@@ -11,7 +11,7 @@ extern "C" {
   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < (n); i += blockDim.x * gridDim.x)
 
 // Use 1024 threads per block, which requires cuda sm_2x or above
-static int CUDA_NUM_THREADS = 1024;
+#define CUDA_NUM_THREADS 1024
 
 // CUDA: number of blocks for threads.
 static int GET_BLOCKS(const int N)
@@ -28,10 +28,10 @@ __global__ void MaxPoolForward(const int nthreads, const float *bottom_data,
 {
 	CUDA_KERNEL_LOOP(index, nthreads)
 	{
-		int pw = index % pooled_width;
-		int ph = (index / pooled_width) % pooled_height;
-		int c = (index / pooled_width / pooled_height) % channels;
-		int n = index / pooled_width / pooled_height / channels;
+		const int pw = index % pooled_width;
+		const int ph = (index / pooled_width) % pooled_height;
+		const int c = (index / pooled_width / pooled_height) % channels;
+		const int n = index / pooled_width / pooled_height / channels;
 		int hstart = ph * stride_h - pad_h;
 		int wstart = pw * stride_w - pad_w;
 		int hend = min(hstart + kernel_h, height);
@@ -67,10 +67,10 @@ __global__ void MaxPoolForwardH(const int nthreads, const __half *bottom_data,
 {
 	CUDA_KERNEL_LOOP(index, nthreads)
 	{
-		int pw = index % pooled_width;
-		int ph = (index / pooled_width) % pooled_height;
-		int c = (index / pooled_width / pooled_height) % channels;
-		int n = index / pooled_width / pooled_height / channels;
+		const int pw = index % pooled_width;
+		const int ph = (index / pooled_width) % pooled_height;
+		const int c = (index / pooled_width / pooled_height) % channels;
+		const int n = index / pooled_width / pooled_height / channels;
 		int hstart = ph * stride_h - pad_h;
 		int wstart = pw * stride_w - pad_w;
 		int hend = min(hstart + kernel_h, height);
@@ -99,13 +99,13 @@ __global__ void MaxPoolForwardH(const int nthreads, const __half *bottom_data,
 
 THFloatTensor *cunn_SpatialMaxPooling_updateOutput(struct module *module, THFloatTensor *input)
 {
-	int kW = module->SpatialMaxPooling.kW;
-	int kH = module->SpatialMaxPooling.kH;
-	int dW = module->SpatialMaxPooling.dW;
-	int dH = module->SpatialMaxPooling.dH;
-	int padW = module->SpatialMaxPooling.padW;
-	int padH = module->SpatialMaxPooling.padH;
-	int ceil_mode = module->SpatialMaxPooling.ceil_mode;
+	const int kW = module->SpatialMaxPooling.kW;
+	const int kH = module->SpatialMaxPooling.kH;
+	const int dW = module->SpatialMaxPooling.dW;
+	const int dH = module->SpatialMaxPooling.dH;
+	const int padW = module->SpatialMaxPooling.padW;
+	const int padH = module->SpatialMaxPooling.padH;
+	const int ceil_mode = module->SpatialMaxPooling.ceil_mode;
 	THFloatTensor *output = module->output;
 	THFloatTensor *indices = module->SpatialMaxPooling.indices;
 
@@ -153,7 +153,7 @@ THFloatTensor *cunn_SpatialMaxPooling_updateOutput(struct module *module, THFloa
 
 	THCudaTensor_resize4d(output, batchSize, nInputPlane, nOutputRows, nOutputCols);
 
-	int count = THFloatTensor_nElement(output);
+	const int count = THFloatTensor_nElement(output);
 
 #ifdef HAVEHALF
 	if(floattype == CUDNN_DATA_HALF)

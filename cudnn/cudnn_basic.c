@@ -92,7 +92,7 @@ THFloatTensor *THFloatTensor_newFromCudaTensor(THFloatTensor *t)
 	return n;
 }
 
-void THCudaTensor_resize4d(THFloatTensor *t, long size0, long size1, long size2, long size3)
+void THCudaTensor_resize4d(THFloatTensor *t, const long size0, const long size1, const long size2, const long size3)
 {
 	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 4;
@@ -115,7 +115,7 @@ void THCudaTensor_resize4d(THFloatTensor *t, long size0, long size1, long size2,
 		THError("Resizing of CUDA tensors not supported");
 }
 
-void THCudaTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2)
+void THCudaTensor_resize3d(THFloatTensor *t, const long size0, const long size1, const long size2)
 {
 	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 3;
@@ -136,7 +136,7 @@ void THCudaTensor_resize3d(THFloatTensor *t, long size0, long size1, long size2)
 		THError("Resizing of CUDA tensors not supported");
 }
 
-void THCudaTensor_resize2d(THFloatTensor *t, long size0, long size1)
+void THCudaTensor_resize2d(THFloatTensor *t, const long size0, const long size1)
 {
 	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 2;
@@ -155,7 +155,7 @@ void THCudaTensor_resize2d(THFloatTensor *t, long size0, long size1)
 		THError("Resizing of CUDA tensors not supported");
 }
 
-void THCudaTensor_resize1d(THFloatTensor *t, long size0)
+void THCudaTensor_resize1d(THFloatTensor *t, const long size0)
 {
 	const long nelemorig = THFloatTensor_nElement(t);
 	t->nDimension = 1;
@@ -293,7 +293,7 @@ struct network *THcudnn_ToCUDNN(struct network *net)
 	return nn;
 }
 
-void adjustLd(char transa, char transb, long m, long n, long k, long *lda, long *ldb, long *ldc)
+void adjustLd(char transa, char transb, const long m, const long n, const long k, long *lda, long *ldb, long *ldc)
 {
 	const int transa_ = ((transa == 't') || (transa == 'T'));
 	const int transb_ = ((transb == 't') || (transb == 'T'));

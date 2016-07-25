@@ -2,12 +2,12 @@
 
 THFloatTensor *cudnn_SpatialMaxPooling_updateOutput(struct module *module, THFloatTensor *input)
 {
-	int kW = module->SpatialMaxPooling.kW;
-	int kH = module->SpatialMaxPooling.kH;
-	int dW = module->SpatialMaxPooling.dW;
-	int dH = module->SpatialMaxPooling.dH;
-	int padW = module->SpatialMaxPooling.padW;
-	int padH = module->SpatialMaxPooling.padH;
+	const int kW = module->SpatialMaxPooling.kW;
+	const int kH = module->SpatialMaxPooling.kH;
+	const int dW = module->SpatialMaxPooling.dW;
+	const int dH = module->SpatialMaxPooling.dH;
+	const int padW = module->SpatialMaxPooling.padW;
+	const int padH = module->SpatialMaxPooling.padH;
 
 	THFloatTensor *output = module->output;
 	cudnnTensorDescriptor_t dinput, doutput;

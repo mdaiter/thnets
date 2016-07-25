@@ -4,8 +4,8 @@ THFloatTensor *cudnn_Threshold_updateOutput(struct module *module, THFloatTensor
 {
 	THFloatTensor *output = module->output;
 	cudnnTensorDescriptor_t dinput, doutput;
-	int inplace = module->Threshold.inplace;
-	float one = 1, zero = 0;
+	const int inplace = module->Threshold.inplace;
+	const float one = 1, zero = 0;
 
 	errcheck(THcudnn_TensorDescriptor(&dinput, input));
 	if(inplace)

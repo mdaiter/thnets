@@ -14,10 +14,10 @@ void THCudaTensor_resizeAs(THFloatTensor *tdst, THFloatTensor *tsrc);
 struct network *THcudnn_ToCUDNN(struct network *net);
 void THCudaTensor_Ones(THFloatTensor *t);
 void THCudaBlas_gemm(char transa, char transb, long m, long n, long k, float alpha, float *a, long lda, float *b, long ldb, float beta, float *c, long ldc);
-float *cuda_rgb2float(float *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
-unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, int bgr);
-void cuda_fillwithone(int n1, int n2, float *data, int stride);
-void cuda_fillwithoneH(int n1, int n2, float *data, int stride);
+float *cuda_rgb2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr);
+unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr);
+void cuda_fillwithone(const int n1, const int n2, float *data, const int stride);
+void cuda_fillwithoneH(const int n1, const int n2, float *data, const int stride);
 #ifdef HAVEFP16
 THFloatTensor *THHalfCudaTensor_newFromFloatTensor(THFloatTensor *t);
 THFloatTensor *THFloatTensor_newFromHalfCudaTensor(THFloatTensor *t);

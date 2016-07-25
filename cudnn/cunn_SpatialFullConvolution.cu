@@ -6,14 +6,14 @@ extern "C" {
 
 THFloatTensor *cunn_SpatialFullConvolution_updateOutput(struct module *module, THFloatTensor *input)
 {
-	int dW = module->SpatialFullConvolution.dW;
-	int dH = module->SpatialFullConvolution.dH;
-	int kW = module->SpatialFullConvolution.kW;
-	int kH = module->SpatialFullConvolution.kH;
-	int padW = module->SpatialFullConvolution.padW;
-	int padH = module->SpatialFullConvolution.padH;
-	int adjW = module->SpatialFullConvolution.adjW;
-	int adjH = module->SpatialFullConvolution.adjH;
+	const int dW = module->SpatialFullConvolution.dW;
+	const int dH = module->SpatialFullConvolution.dH;
+	const int kW = module->SpatialFullConvolution.kW;
+	const int kH = module->SpatialFullConvolution.kH;
+	const int padW = module->SpatialFullConvolution.padW;
+	const int padH = module->SpatialFullConvolution.padH;
+	const int adjW = module->SpatialFullConvolution.adjW;
+	const int adjH = module->SpatialFullConvolution.adjH;
 
 	THFloatTensor *weight = module->SpatialFullConvolution.weight;
 	THFloatTensor *bias = module->SpatialFullConvolution.bias;
@@ -21,8 +21,8 @@ THFloatTensor *cunn_SpatialFullConvolution_updateOutput(struct module *module, T
 	THFloatTensor *columns = module->SpatialFullConvolution.columns;
 	THFloatTensor *ones = module->SpatialFullConvolution.ones;
 
-	int nInputPlane = weight->size[0];
-	int nOutputPlane = weight->size[1];
+	const int nInputPlane = weight->size[0];
+	const int nOutputPlane = weight->size[1];
 
 	if(input->nDimension != 3 && input->nDimension != 4)
 		THError("3D or 4D (batch mode) tensor is expected");
@@ -38,13 +38,13 @@ THFloatTensor *cunn_SpatialFullConvolution_updateOutput(struct module *module, T
 	} else if(input->size[1] != nInputPlane)
 		THError("input channels and nInputPlane dont match");
 
-	long inputWidth   = input->size[3];
-	long inputHeight  = input->size[2];
-	long outputWidth  = (inputWidth - 1) * dW - 2*padW + kW + adjW;
-	long outputHeight = (inputHeight - 1) * dH - 2*padH + kH + adjH;
+	const long inputWidth   = input->size[3];
+	const long inputHeight  = input->size[2];
+	const long outputWidth  = (inputWidth - 1) * dW - 2*padW + kW + adjW;
+	const long outputHeight = (inputHeight - 1) * dH - 2*padH + kH + adjH;
 
 	// Batch size + input planes
-	long batchSize = input->size[0];
+	const long batchSize = input->size[0];
 
 	// Resize output
 	THCudaTensor_resize4d(output, batchSize, nOutputPlane, outputHeight, outputWidth);
