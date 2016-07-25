@@ -67,6 +67,17 @@ FIND_PACKAGE(OpenCL)
 IF(OpenCL_FOUND)
 	INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
 	LINK_DIRECTORIES(${OpenCL_LIBRARY})
+
+	ADD_LIBRARY(THNets_OpenCL
+		opencl/opencl_basic.c
+		opencl/opencl_img.c
+		opencl/opencl_SoftMax.c
+		opencl/opencl_SpatialConvolution.c
+		opencl/opencl_SpatialMaxPooling.c
+		opencl/opencl_Threshold.c
+	)
+
+	TARGET_LINK_LIBRARIES(THNets_CPU THNets_OpenCL)
 ENDIF()
 
 FIND_PACKAGE(CUDA)
