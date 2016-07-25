@@ -85,7 +85,7 @@ __global__ void bgr2half_kernel(unsigned short *dst, const unsigned char *src, c
 
 extern "C" float *cuda_grayscale2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std);
 extern "C" float *cuda_rgb2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr);
-extern "C" unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, int width, int height, int srcstride, const float *mean, const float *std, const int bgr);
+extern "C" unsigned short *cuda_rgb2half(unsigned short *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std, const int bgr);
 
 float *cuda_grayscale2float(float *dst, const unsigned char *src, const int width, const int height, const int srcstride, const float *mean, const float *std)
 {

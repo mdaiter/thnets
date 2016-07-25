@@ -12,8 +12,8 @@ THFloatTensor *cudnn_SpatialConvolution_updateOutput(struct module *module, THFl
 	const int padW = module->SpatialConvolution.padW;
 	const int padH = module->SpatialConvolution.padH;
 	// For some reason, making these const and passing to non-const params slows down the entire operation
-	int nInputPlane  = module->SpatialConvolution.nInputPlane;
-	int nOutputPlane = module->SpatialConvolution.nOutputPlane;
+	const int nInputPlane  = module->SpatialConvolution.nInputPlane;
+	const int nOutputPlane = module->SpatialConvolution.nOutputPlane;
 
 	THFloatTensor *weight = module->SpatialConvolution.weight;
 	THFloatTensor *bias = module->SpatialConvolution.bias;
@@ -24,7 +24,7 @@ THFloatTensor *cudnn_SpatialConvolution_updateOutput(struct module *module, THFl
 	cudnnTensorDescriptor_t dinput, dbias, doutput;
 	cudnnConvolutionDescriptor_t dconv;
 	cudnnFilterDescriptor_t dweight;
-	float one = 1, zero = 0;
+	const float one = 1, zero = 0;
 	size_t reqwssize;
 	static void *ws;
 	static size_t wssize;
