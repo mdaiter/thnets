@@ -276,7 +276,7 @@ void THFloatTensor_copy(THFloatTensor *tdst, THFloatTensor *tsrc);
 void THFloatTensor_free(THFloatTensor *t);
 THFloatTensor *THFloatTensor_newSelect(THFloatTensor *tensor, int dimension, long sliceIndex);
 float *THFloatTensor_data(THFloatTensor *tensor);
-double THExpMinusApprox(const double x) __attribute__((pure, const));
+double THExpMinusApprox(const double x) __attribute__((const));
 void THBlas_gemm(char transa, char transb, long m, long n, long k, float alpha, float *a, long lda, float *b, long ldb, float beta, float *c, long ldc);
 void THFloatTensor_addmm(THFloatTensor *r_, float beta, THFloatTensor *t, float alpha, THFloatTensor *m1, THFloatTensor *m2);
 void THFloatTensor_convmm(THFloatTensor *r, float beta, float alpha, THFloatTensor *filt, THFloatTensor *m,
