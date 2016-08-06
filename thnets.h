@@ -1,6 +1,13 @@
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <float.h>
 #include <stdlib.h>
 #include "thvector.h"
+#include "thnetwork.h"
 #ifdef MEMORYDEBUG
 #include "memory.h"
 #endif
@@ -96,24 +103,6 @@ struct threcord {
 	struct thobject name;
 	struct thobject value;
 };
-
-typedef struct THFloatStorage
-{
-    float *data;
-	int nref, mustfree;	// mustfree = 0 (allocated somewhere else), 1 (free), 2 (cuda free)
-} THFloatStorage;
-
-typedef struct THFloatTensor
-{
-    long size[4];
-    long stride[4];
-    int nDimension;    
-	THFloatStorage *storage;
-	long storageOffset;
-#ifdef LOWP
-	float sub, mult;
-#endif
-} THFloatTensor;
 
 struct SpatialConvolution
 {
@@ -337,16 +326,6 @@ int nnload_SpatialBatchNormalization(struct module *mod, struct nnmodule *n);
 
 /* High level API */
 
-typedef struct thnetwork
-{
-	struct thobject *netobj;
-	struct thobject *statobj;
-	struct network *net;
-	THFloatTensor *out;
-	float mean[3], std[3];
-	int grayscale;
-} THNETWORK;
-
 void THInit();
 THNETWORK *THLoadNetwork(const char *path, int grayscale);
 void THMakeSpatial(THNETWORK *network);
@@ -373,4 +352,8 @@ extern int th_debug, th_profile;
 
 #ifdef LOWP
 #include "lowp/lowp.h"
+#endif
+
+#ifdef __cplusplus
+}
 #endif

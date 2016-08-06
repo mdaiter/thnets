@@ -144,7 +144,7 @@
 
 #else	
 
-static inline void THFloatVector_fill(float *x, float c, long n)
+static inline void THFloatVector_fill(float *x, const float c, const long n)
 {
 	long i = 0;
 	for(; i < n-4; i += 4)

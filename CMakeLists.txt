@@ -8,7 +8,8 @@ SET(CMAKE_ASM_FLAGS "${CFLAGS} ${ASM_OPTIONS}" )
 
 ENABLE_LANGUAGE(C ASM)
 
-OPTION(CUDNN_HALF "CUDNN_HALF" ON)
+OPTION(CUDNN_HALF "CUDNN_HALF" OFF)
+OPTION(THNETS_WITH_OPENCLOPENCL "THNETS_WITH_OPENCL" OFF)
 OPTION(THNETS_EXAMPLE "THNETS_EXAMPLE" ON)
 OPTION(MEMORYDEBUG "MEMORYDEBUG" OFF)
 OPTION(GDBDEBUG "GDBDEBUG" OFF)
@@ -31,8 +32,7 @@ IF(GDBDEBUG)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
 ENDIF()
 
-
-ADD_LIBRARY(THNets_CPU SHARED
+ADD_LIBRARY(THNets_CPU STATIC
 	images.c
 	memory.c
 	thapi.c
@@ -40,7 +40,7 @@ ADD_LIBRARY(THNets_CPU SHARED
 	thload.c
 )
 
-ADD_LIBRARY(THNets_OpenBLAS_BASE SHARED
+ADD_LIBRARY(THNets_OpenBLAS_BASE STATIC
 	OpenBLAS-stripped/copy.c
 	OpenBLAS-stripped/gemm_beta.c
 	OpenBLAS-stripped/gemv_t.c
@@ -49,7 +49,7 @@ ADD_LIBRARY(THNets_OpenBLAS_BASE SHARED
 	OpenBLAS-stripped/sger.c
 )
 
-ADD_LIBRARY(THNets_Modules
+ADD_LIBRARY(THNets_Modules STATIC
 	modules/Dropout.c
 	modules/Linear.c
 	modules/Normalize.c
@@ -69,11 +69,11 @@ ADD_LIBRARY(THNets_Modules
 TARGET_LINK_LIBRARIES(THNets_CPU THNets_Modules)
 
 FIND_PACKAGE(OpenCL)
-IF(OpenCL_FOUND)
+IF(OpenCL_FOUND AND THNETS_WITH_OPENCL)
 	INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
 	LINK_DIRECTORIES(${OpenCL_LIBRARY})
 
-	ADD_LIBRARY(THNets_OpenCL
+	ADD_LIBRARY(THNets_OpenCL STATIC
 		opencl/opencl_basic.c
 		opencl/opencl_img.c
 		opencl/opencl_SoftMax.c
@@ -81,14 +81,14 @@ IF(OpenCL_FOUND)
 		opencl/opencl_SpatialMaxPooling.c
 		opencl/opencl_Threshold.c
 	)
-
+	INSTALL(TARGETS THNets_OpenCL DESTINATION lib EXPORT openMVG-targets)
 	TARGET_LINK_LIBRARIES(THNets_CPU THNets_OpenCL)
 ENDIF()
 
 FIND_PACKAGE(CUDA)
 IF(CUDA_FOUND)
 	INCLUDE_DIRECTORIES(${CUDA_INCLUDE_DIRS})
-	LINK_DIRECTORIES(${CUDA_LIBRARIES})
+	LINK_DIRECTORIES(${CUDA_LIBRARIES} ${CUDA_LIBRARY_DIRS})
 
 	#Compile the main library
 	SET(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; 
@@ -98,8 +98,8 @@ IF(CUDA_FOUND)
 		-L/usr/local/cuda/lib64
 		-lcudart
 		-lcudnn
-		-lcublas
 	)
+
 	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DCUDNN")
 	IF(OPTIMIZE)
 		SET(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -O3)
@@ -116,11 +116,12 @@ IF(CUDA_FOUND)
 			cudnn/cudnn_SpatialMaxPooling.c
 			cudnn/cudnn_th.h
 			cudnn/cudnn_Threshold.c
-			cudnn/cunn_SpatialFullConvolution.cu
+			#			cudnn/cunn_SpatialFullConvolution.cu
 			cudnn/cunn_SpatialMaxPooling.cu
 			cudnn/cunn_SpatialMaxUnpooling.cu
 	)
-	TARGET_LINK_LIBRARIES(THNets_CPU THNets_CUDA)
+CUDA_ADD_CUBLAS_TO_TARGET(THNets_CUDA)
+TARGET_LINK_LIBRARIES(THNets_CPU THNets_CUDA cuda rt cudnn ${CUDA_LIBRARIES})
 ENDIF()
 
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -140,10 +141,15 @@ IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	)
 ENDIF(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-TARGET_LINK_LIBRARIES(THNets_CPU THNets_OpenBLAS_BASE openblas cuda rt cudnn cublas)
+INSTALL(TARGETS THNets_CUDA DESTINATION lib EXPORT openMVG-targets)
+INSTALL(TARGETS THNets_Modules DESTINATION lib EXPORT openMVG-targets)
+INSTALL(TARGETS THNets_OpenBLAS_BASE DESTINATION lib EXPORT openMVG-targets)
+INSTALL(TARGETS THNets_CPU DESTINATION lib EXPORT openMVG-targets)
 
-CUDA_ADD_EXECUTABLE(THNets_test test.c images.c)
+TARGET_LINK_LIBRARIES(THNets_CPU THNets_OpenBLAS_BASE openblas)
 
-TARGET_COMPILE_OPTIONS(THNets_test PRIVATE "-L/usr/local/cuda/lib64")
+#CUDA_ADD_EXECUTABLE(THNets_test test.c images.c)
 
-TARGET_LINK_LIBRARIES(THNets_test THNets_CPU jpeg png)# cuda cudnn rt cublas)
+#TARGET_COMPILE_OPTIONS(THNets_test PRIVATE "-L/usr/local/cuda/lib64")
+
+#TARGET_LINK_LIBRARIES(THNets_test THNets_CPU jpeg png)# cuda cudnn rt cublas)

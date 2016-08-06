@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef HAVEHALF
 #include "cuda_fp16.h"
 #endif

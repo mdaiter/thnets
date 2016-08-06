@@ -270,7 +270,7 @@ struct network *THcudnn_ToCUDNN(struct network *net)
 			nn->modules[i].SpatialBatchNormalization.running_mean = THCudaTensor_newFromFloatTensor(net->modules[i].SpatialBatchNormalization.running_mean);
 			nn->modules[i].SpatialBatchNormalization.running_var = THCudaTensor_newFromFloatTensor(net->modules[i].SpatialBatchNormalization.running_var);
 			break;
-		case MT_SpatialFullConvolution:
+/*		case MT_SpatialFullConvolution:
 			nn->modules[i].updateOutput = cunn_SpatialFullConvolution_updateOutput;
 #ifdef HAVEFP16
 			if(floattype == CUDNN_DATA_HALF)
@@ -287,8 +287,8 @@ struct network *THcudnn_ToCUDNN(struct network *net)
 				nn->modules[i].SpatialFullConvolution.columns = THCudaTensor_newFromFloatTensor(net->modules[i].SpatialFullConvolution.columns);
 				nn->modules[i].SpatialFullConvolution.ones = THCudaTensor_newFromFloatTensor(net->modules[i].SpatialFullConvolution.ones);
 			}
-			break;
-		}
+			break; */
+		} 
 	}
 	return nn;
 }
